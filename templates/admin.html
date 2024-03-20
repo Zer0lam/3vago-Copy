@@ -1,0 +1,1148 @@
+{% extends "base.html" %}
+
+{% block title %} Administrador {% endblock %}
+
+
+{% block head %}
+
+<!-- DASHBOARD ADMIN CSS -->
+<link href="/static/dash/dash-css/theme-rtl.css" rel="stylesheet" id="style-rtl" />
+<link href="/static/dash/dash-css/theme.min.css" rel="stylesheet" id="style-default" />
+<link href="/static/dash/dash-css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl" />
+<link href="/static/dash/dash-css/user.min.css" rel="stylesheet" id="user-style-default" />
+
+
+<!-- DASHBOARD ADMIN JS -->
+<script src="/static/dash/dash-js/popper.min.js"></script>
+<script src="/static/dash/dash-js/anchor.min.js"></script>
+<script src="/static/dash/dash-js/is.min.js"></script>
+<script src="/static/dash/dash-js/echarts.min.js"></script>
+<script src="/static/dash/dash-js/lodash.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+<script src="/static/dash/dash-js/list.min.js"></script>
+<script src="/static/dash/dash-js/theme.js"></script>
+<script src="/static/dash/dash-js/chart.min.js"></script>
+<script src="/static/dash/dash-js/countUp.umd.js"></script>
+<script src="/static/dash/dash-js/dayjs.min.js"></script>
+<script src="/static/js/dashboard.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="side-adm">
+  <div class="sidebar-header">
+    <h5>Menú</h5>
+  </div>
+  <ul>
+    <li>
+      <a href="#" class="home"><i class="fas fa-home"></i><span class="sidebar-text">Inicio</span></a>
+    </li>
+    <li class="users">
+      <a href="#"><i class="fas fa-user"></i><span class="sidebar-text">Usuarios</span></a>
+    </li>
+    <li class="zone">
+      <a href="#"><i class="fas fa-earth-americas"></i><span class="sidebar-text">Zonas</span></a>
+    </li>
+    <li class="gerente">
+      <a href="#"><i class="fas fa-house"></i><span class="sidebar-text">Cabañas</span></a>
+    </li>
+    <li>
+      <a href="{{ url_for('generar_reporte') }}"><i class="fas fa-print"></i><span class="sidebar-text">Imprimir
+          Reporte</span></a>
+    </li>
+    <li>
+      <a href="{{ url_for('logout') }}"><i class="fas fa-right-from-bracket"></i><span class="sidebar-text">Cerrar
+          Sesión</span></a>
+    </li>
+
+  </ul>
+</div>
+
+<div class="content-adm">
+  <div id="divInicio">
+    <div class="row">
+      <div class="col">
+        <h1>Dashboard general 3vago</h1>
+      </div>
+      <div class="col" style="text-align: right; margin-top:20px">
+        <p>Bienvenido Administrador</p>
+      </div>
+
+
+    </div>
+
+    <br>
+
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="row flex-between-center">
+              <div class="col-auto">
+                <h6 class="mb-0">Reservations Chart</h6>
+              </div>
+              <div class="col-auto d-flex">
+                <select id="select-month" class="form-select form-select-sm select-month me-2">
+                  <option value="1">Enero</option>
+                  <option value="2">Febrero</option>
+                  <option value="3">Marzo</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Mayo</option>
+                  <option value="6">Junio</option>
+                  <option value="7">Julio</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </select>
+                <button id="update-chart" class="btn btn-primary btn-sm"
+                  onclick="obtenerDatosYActualizarGrafico()">Update Chart</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas class="max-w-100" id="chartjs-line-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <br><br>
+
+    <div class="row">
+      <div class="col">
+        <div class="row g-3">
+          <div class="col-md-4 col-xxl-12">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="row flex-between-center g-0">
+                  <div class="col-6 d-lg-block flex-between-center">
+                    <h6 class="mb-2 text-900">Total usuarios</h6>
+                    <h4 class="fs-3 fw-normal text-700 mb-0">{{ num_usuarios }}</h4>
+                  </div>
+                  <div class="col-auto h-100">
+                    <div style="height:50px;min-width:80px;"
+                      data-echarts='{"xAxis":{"show":false,"boundaryGap":false},"series":[{"data":[3,7,6,8,5,12,11],"type":"line","symbol":"none"}],"grid":{"right":"0px","left":"0px","bottom":"0px","top":"0px"}}'>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-xxl-12">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="row flex-between-center">
+                  <div class="col d-md-flex d-lg-block flex-between-center">
+                    <h6 class="mb-md-0 mb-lg-2">Total Cabañas</h6>
+                    <span class="badge rounded-pill badge-soft-success"><span class="fas fa-caret-up"></span> {{
+                      porcentaje }}%</span>
+                  </div>
+                  <div class="col-auto">
+                    <h4 class="fs-3 fw-normal text-700"
+                      data-countup='{"endValue":{{ total_cabanas }}, "decimalPlaces":0, "suffix":"", "prefix":""}'>
+
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-4 col-xxl-12">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="row flex-between-center">
+                  <div class="col d-md-flex d-lg-block flex-between-center">
+                    <h6 class="mb-md-0 mb-lg-2">Conversion</h6><span class="badge rounded-pill badge-soft-primary"><span
+                        class="fas fa-caret-up"></span> 29.4%</span>
+                  </div>
+                  <div class="col-auto">
+                    <h4 class="fs-3 fw-normal text-primary"
+                      data-countup='{"endValue":28.5,"decimalPlaces":2,"suffix":"%"}'>0</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header d-flex flex-between-center  py-2">
+            <h6 class="mb-0">Usurios en red</h6>
+          </div>
+          <div class="card-body py-2" id="tableExample"
+            data-list='{"valueNames":["name","email","rol"],"page":5,"pagination":true}'>
+            <div class="table-responsive scrollbar">
+              <table class="table table-bordered table-striped fs--1 mb-0">
+                <thead class="bg-200 text-900">
+                  <tr>
+                    <th class="sort" data-sort="name">Nombre</th>
+                    <th class="sort" data-sort="email">Email</th>
+                    <th class="sort" data-sort="rol">Rol</th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  {% for usuario in usuarios %}
+                  <tr>
+                    <td class="name">{{ usuario.nombre }}</td>
+                    <td class="email">{{ usuario.email }}</td>
+                    <td class="rol">
+                      <span
+                        class="badge badge rounded-pill d-block p-2 {% if usuario.tipo_usr == 'Administrador' %}badge-soft-success{% else %}badge-soft-primary{% endif %}">
+                        {{ usuario.tipo_usr }}
+                        <span class="ms-1 fas fa-check" data-fa-transform="shrink-2"></span>
+                      </span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="row align-items-center mt-3">
+              <div class="pagination d-none"></div>
+              <div class="col">
+                <p class="mb-0 fs--1">
+                  <span class="d-none d-sm-inline-block" data-list-info="data-list-info"></span>
+                  <span class="d-none d-sm-inline-block"> &mdash; </span>
+                  <a class="fw-semi-bold" href="#!" data-list-view="*">Ver más<span class="fas fa-angle-right ms-1"
+                      data-fa-transform="down-1"></span></a>
+                  <a class="fw-semi-bold d-none" href="#!" data-list-view="less">Ver menos<span
+                      class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+                </p>
+              </div>
+              <div class="col-auto d-flex">
+                <button class="btn btn-sm btn-primary" type="button"
+                  data-list-pagination="prev"><span>Anterior</span></button>
+                <button class="btn btn-sm btn-primary px-4 ms-2" type="button"
+                  data-list-pagination="next"><span>Siguiente</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-header bg-light d-flex flex-between-center py-2">
+            <h6 class="mb-0">Bandwidth Saved</h6>
+            <div class="dropdown font-sans-serif btn-reveal-trigger">
+              <button class="btn btn-link text-600 btn-sm dropdown-toggle dropdown-caret-none btn-reveal" type="button"
+                id="dropdown-bandwidth-saved" data-bs-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
+                aria-expanded="false"><span class="fas fa-ellipsis-h fs--2"></span></button>
+              <div class="dropdown-menu dropdown-menu-end border py-2" aria-labelledby="dropdown-bandwidth-saved"><a
+                  class="dropdown-item" href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
+                <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#!">Remove</a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body d-flex flex-center flex-column">
+            <!-- Find the JS file for the following chart at: src/js/charts/echarts/bandwidth-saved.js-->
+            <!-- If you are not using gulp based workflow, you can find the transpiled code at: public/assets/js/theme.js-->
+            <div class="echart-bandwidth-saved" data-echart-responsive="true"></div>
+            <div class="text-center mt-3">
+              <h6 class="fs-0 mb-1"><span class="fas fa-check text-success me-1"
+                  data-fa-transform="shrink-2"></span>35.75 GB saved</h6>
+              <p class="fs--1 mb-0">38.44 GB total bandwidth</p>
+            </div>
+          </div>
+          <div class="card-footer bg-light py-2">
+            <div class="row flex-between-center">
+              <div class="col-auto">
+                <select class="form-select form-select-sm">
+                  <option>Last 6 Months</option>
+                  <option>Last Year</option>
+                  <option>Last 2 Year</option>
+                </select>
+              </div>
+              <div class="col-auto"><a class="fs--1 font-sans-serif" href="#!">Help</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <br><br>
+
+
+
+
+  </div> <!-- end div-inicio -->
+
+  <div id="divUsuarios" style="display: none">
+    <div class="row">
+      <div class="col">
+        <h1>3vago</h1>
+      </div>
+      <div class="col" style="text-align: right; margin-top:20px">
+        <p>Bienvenido Administrador</p>
+      </div>
+    </div>
+    <br>
+
+    <div class="card">
+      <div class="card-header bg-light d-flex align-items-center justify-content-between">
+        <div style="margin-top: 10px;">
+          <h4>Usuarios</h4>
+        </div>
+        <div class="text-end">
+          <button class="btn btn-sm btn-falcon-default" title="Agregar" data-bs-toggle="modal"
+            data-bs-target="#modalAgregarUsuario">
+            <i class="fas fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive scrollbar">
+          <table class="table table-hover table-striped overflow-hidden">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Alias</th>
+                <th scope="col">Email</th>
+                <th scope="col">Tipo de Usuario</th>
+                <th class="text-end" scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for usuario in usuarios %}
+              <tr class="align-middle">
+                <td class="text-nowrap">
+                  <div class="d-flex align-items-center">
+                    <div class="ms-2">{{ usuario.nombre }}</div>
+                  </div>
+                </td>
+                <td class="text-nowrap">{{ usuario.alias }}</td>
+                <td class="text-nowrap">{{ usuario.email }}</td>
+                <td class="text-nowrap">
+                  <span
+                    class="badge badge rounded-pill d-block p-2 {% if usuario.tipo_usr == 'Administrador' %}badge-soft-success{% else %}badge-soft-primary{% endif %}">
+                    {{ usuario.tipo_usr }}
+                    <span class="ms-1 fas fa-check" data-fa-transform="shrink-2"></span>
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a class="btn actionDelete" title="Borrar" data-id="{{ usuario.id_usr }}">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                  <a class="btn actionEdit" title="Editar" data-id="{{ usuario.id_usr }}">
+                    <i class="fas fa-edit"></i>
+                  </a>
+
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- end div usuarios -->
+
+  <div id="divZona" style="display: none;">
+    <div class="row">
+      <div class="col">
+        <h1>3vago</h1>
+      </div>
+      <div class="col" style="text-align: right; margin-top:20px">
+        <p>Bienvenido Administrador</p>
+      </div>
+    </div>
+    <div class="row g-0">
+      <div class="card">
+
+        <div class="card-header bg-light d-flex align-items-center justify-content-between">
+          <div style="margin-top: 10px;">
+            <h4>Zonas</h4>
+          </div>
+          <div class="text-end">
+            <button class="btn btn-sm btn-falcon-default" title="Agregar" data-bs-toggle="modal"
+              data-bs-target="#modalAgregarZona">
+              <i class="fas fa-plus"></i> Agregar
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-hover table-striped overflow-hidden">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Ubicación</th>
+                <th scope="col">Activo</th>
+                <th scope="col">Nombre Usuario</th>
+                <th scope="col">Fecha de Actualización</th>
+                <th class="text-end" scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for zona in zonas %}
+              <tr class="align-middle">
+                <td class="text-nowrap">{{ zona.nombre_zn }}</td>
+                <td class="text-nowrap">{{ zona.ubicacion_zn }}</td>
+                <td class="text-nowrap">
+                  {% if zona.activo_zn %}
+                  <span class="badge badge rounded-pill d-block p-2 badge-soft-success">Activo<span
+                      class="ms-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
+                  {% else %}
+                  <span class="badge badge rounded-pill d-block p-2 badge-soft-secondary">Inactivo<span
+                      class="ms-1 fas fa-times" data-fa-transform="shrink-2"></span></span>
+                  {% endif %}
+                </td>
+                <td class="text-nowrap">{{ zona.nombre }}</td>
+                <td class="text-nowrap">{{ zona.uptade_zn }}</td>
+                <td class="text-end">
+                  <a class="btn del-zone" title="Borrar" data-id="{{ zona.id_zn }}">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                  <a class="btn edit-zone" title="Editar" data-id="{{ zona.id_zn }}">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div> <!-- end div zona -->
+
+  <div id="divGerente" style="display: none;">
+
+    <header class="p-5 pb-0">
+      <h1 class="text-center">Administración de Cabañas</h1>
+    </header>
+
+    <article class="">
+
+      <section class="row">
+
+        <div class="col-7">
+          <div class="card">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+              <div style="margin-top: 10px;">
+                <h4>Cabañas</h4>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-sm btn-falcon-default" title="Agregar" data-bs-toggle="modal"
+                  data-bs-target="#modalAgregarCabana">
+                  <i class="fas fa-plus"></i> Agregar
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive scrollbar" style="max-height: 21rem;">
+                <table class="table table-hover table-striped overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Cabaña</th>
+                      <th>Ubicación</th>
+                      <th>Capacidad</th>
+                      <th class="text-end" scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cabana in cabanas %}
+                    <tr class="align-middle">
+                      <td class="text-nowrap">
+                        <div class="d-flex align-items-center">
+                          <div class="ms-2">{{ cabana.id_cbn }}</div>
+                        </div>
+                      </td>
+                      <td class="text-nowrap">{{ cabana.no_cbn }}</td>
+                      <td class="text-nowrap">{{ cabana.ubicacion_cbn }}</td>
+                      <td class="text-nowrap">{{ cabana.capacidad_cbn }}</td>
+                      <td class="text-end">
+                        <a class="btn del-cabanas" title="Borrar" data-id="{{ cabana.id_cbn }}">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                        <a class="btn edit-cabana" title="Editar" data-id="{{ cabana.id_cbn }}">
+                          <i class="fas fa-edit"></i>
+                        </a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+              <div style="margin-top: 10px;">
+                <h4>Reservaciones</h4>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-sm btn-falcon-default" title="Agregar" data-bs-toggle="modal"
+                  data-bs-target="#modalAgregarReservacion">
+                  <i class="fas fa-plus"></i> Agregar
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive scrollbar" style="max-height: 21rem;">
+                <table class="table table-hover table-striped overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Cabaña</th>
+                      <th>fecha_inicio</th>
+                      <th>fecha_fin</th>
+                      <th class="text-end" scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for reservacion in reservaciones %}
+                    <tr class="align-middle">
+                      <td class="text-nowrap">
+                        <div class="d-flex align-items-center">
+                          <div class="ms-2">{{ reservacion.id_rsvcn }}</div>
+                        </div>
+                      </td>
+                      <td class="text-nowrap">{{ reservacion.no_cbn }}</td>
+                      <td class="text-nowrap">{{ reservacion.fecha_inicio }}</td>
+                      <td class="text-nowrap">{{ reservacion.fecha_fin }}</td>
+                      <td class="text-end">
+                        <a class="btn del-reservacion" title="Borrar" data-id="{{ reservacion.id_rsvcn }}">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                        <a class="btn edit-reservacion" title="Editar" data-id="{{ reservacion.id_rsvcn }}">
+                          <i class="fas fa-edit"></i>
+                        </a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-5">
+
+          <div class="card">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+              <div style="margin-top: 10px;">
+                <h4>Información Adicional</h4>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th>Numero Total de Cabañas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="align-middle">
+                      <td class="text-nowrap">
+                        {{numcabanas}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+              <div style="margin-top: 10px;">
+                <h4>Calendario</h4>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-sm btn-falcon-default" title="Agregar" data-bs-toggle="modal"
+                  data-bs-target="#modalAgregarCalendario">
+                  <i class="fas fa-plus"></i> Agregar
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive scrollbar" style="max-height: 35rem;">
+                <table class="table table-hover table-striped overflow-hidden">
+                  <thead>
+                    <tr>
+                      <th>Cabaña</th>
+                      <th>Dia</th>
+                      <th>Estado</th>
+                      <th class="text-end" scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for calendario in fechas %}
+                    <tr class="align-middle">
+                      <td class="text-nowrap">
+                        <div class="d-flex align-items-center">
+                          <div class="ms-2">{{ calendario.no_cbn }}</div>
+                        </div>
+                      </td>
+                      <td class="text-nowrap">{{ calendario.dia_disp }}</td>
+                      <td class="text-nowrap">
+                        {% if calendario.disponible == '1' %}
+                          Disponible
+                        {% else %}
+                          Reservado
+                        {% endif %}
+                      </td>
+                      <td class="text-end">
+                        <a class="btn del-calendario" title="Borrar" data-id="{{ calendario.id_fh }}">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                        <a class="btn edit-calendario" title="Editar" data-id="{{ calendario.id_fh }}">
+                          <i class="fas fa-edit"></i>
+                        </a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </article>
+  </div> <!-- end div cabana -->
+
+</div> <!-- end content-adm -->
+
+
+<!-- 
+  =================================================================
+  ==================   M O D A L E S   ============================
+  =================================================================
+
+-->
+<div class="modal fade bd-example-modal-lg" id="modalAgregarUsuario" tabindex="-1"
+  aria-labelledby="modalAgregarUsuarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarUsuarioLabel">Agregar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('agregar_usuario') }}" class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" placeholder="Nombre del usuario" name="nombre">
+            </div>
+            <div class="mb-3">
+              <label for="apellidoP" class="form-label">Apellido Paterno</label>
+              <input type="text" class="form-control" id="apellidoP" placeholder="Apellido paterno del usuario"
+                name="apellidoP">
+            </div>
+            <div class="mb-3">
+              <label for="apellidoM" class="form-label">Apellido Materno</label>
+              <input type="text" class="form-control" id="apellidoM" placeholder="Apellido materno del usuario"
+                name="apellidoM">
+            </div>
+            <div class="mb-3">
+              <label for="alias" class="form-label">Alias</label>
+              <input type="text" class="form-control" id="alias" placeholder="Alias del usuario" name="alias">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="Email del usuario" name="email">
+            </div>
+            <div class="mb-3">
+              <label for="psw" class="form-label">Contraseña</label>
+              <input type="text" class="form-control" id="psw" placeholder="Contraseña del usuario" name="psw">
+            </div>
+            <div class="mb-3">
+              <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+              <select class="form-select" id="tipoUsuario" name="tipoUsuario">
+                <option value="1">Administrador</option>
+                <option value="2">Supervisor</option>
+              </select>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary" name="agregar_usuario">Guardar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="modalActualizarUsuario" tabindex="-1"
+  aria-labelledby="modalActualizarUsuarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalActualizarUsuarioLabel">Actualizar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('actualizar_usuario') }}" class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre_act" name="nombre">
+            </div>
+            <div class="mb-3">
+              <label for="apellidoP" class="form-label">Apellido Paterno</label>
+              <input type="text" class="form-control" id="apellidoP_act" name="apellidoP">
+            </div>
+            <div class="mb-3">
+              <label for="apellidoM" class="form-label">Apellido Materno</label>
+              <input type="text" class="form-control" id="apellidoM_act" name="apellidoM">
+            </div>
+            <div class="mb-3">
+              <label for="alias" class="form-label">Alias</label>
+              <input type="text" class="form-control" id="alias_act" name="alias">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email_act" name="email" disabled>
+            </div>
+            <div class="mb-3">
+              <label for="psw" class="form-label">Contraseña</label>
+              <input type="text" class="form-control" id="psw_act" name="psw" disabled>
+            </div>
+            <div class="mb-3">
+              <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+              <select class="form-select" id="tipoUsuario_act" name="tipoUsuario" disabled>
+                <option value="1">Administrador</option>
+                <option value="2">Supervisor</option>
+              </select>
+            </div>
+            <input type="hidden" id="id_usr_act" name="id_usr">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary" name="actualizar_usuario">Actualizar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar Zona -->
+<div class="modal fade " id="modalAgregarZona" tabindex="-1" aria-labelledby="modalAgregarZonaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarZonaLabel">Agregar Zona</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar zona -->
+        <form method="POST" action="{{ url_for('agregar_zona') }}">
+          <div class="mb-3">
+            <label for="nombreZona" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreZona" name="nombreZona" required>
+          </div>
+          <div class="mb-3">
+            <label for="ubicacionZona" class="form-label">Ubicación</label>
+            <input type="text" class="form-control" id="ubicacionZona" name="ubicacionZona" required>
+          </div>
+          <div class="mb-3">
+            <label for="activoZona" class="form-label">Activo</label>
+            <select class="form-select" id="activoZona" name="activoZona">
+              <option value="true" selected>Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="activoZona" class="form-label">Supervisor/a</label>
+            <select class="form-select" id="selectUsuario" name="selectUsuario">
+              {% for user in users_info %}
+              <option value="{{ user.id_usr }}">{{ user.nombre }} {{ user.apellidoP }} {{ user.apellidoM }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregarZona">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Actualizar Zona -->
+<div class="modal fade" id="modalActualizarZona" tabindex="-1" aria-labelledby="modalActualizarZonaLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalActualizarZonaLabel">Actualizar Zona</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para actualizar zona -->
+        <form method="POST" action="{{ url_for('actualizar_zona') }}">
+          <input type="hidden" id="id_zn_act" name="id_zn_act">
+
+
+          <div class="mb-3">
+            <label for="nombreZona_act" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreZona_act" name="nombreZona_act" required>
+          </div>
+          <div class="mb-3">
+            <label for="ubicacionZona_act" class="form-label">Ubicación</label>
+            <input type="text" class="form-control" id="ubicacionZona_act" name="ubicacionZona_act" required>
+          </div>
+          <div class="mb-3">
+            <label for="activoZona_act" class="form-label">Activo</label>
+            <select class="form-select" id="activoZona_act" name="activoZona_act">
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <select class="form-select" id="selectUsuario_act" name="selectUsuario_act">
+              {% for user in users_info %}
+              <option value="{{ user.id_usr }}">{{ user.nombre }} {{ user.apellidoP }} {{ user.apellidoM }}</option>
+              {% endfor %}
+            </select>
+
+          </div>
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="actualizarZona">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar cabana -->
+<div class="modal fade " id="modalAgregarCabana" tabindex="-1" aria-labelledby="modalAgregarCabanaLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarCabanaLabel">Agregar Cabaña</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar cabana -->
+        <form method="POST" action="{{ url_for('agregar_cabana') }}">
+          <div class="mb-3">
+            <label for="NoCabana" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="NoCabana" name="NoCabana" required>
+          </div>
+          <div class="mb-3">
+            <label for="bcnCabana" class="form-label">Ubicación</label>
+            <input type="text" class="form-control" id="bcnCabana" name="bcnCabana" required>
+          </div>
+          <div class="mb-3">
+            <label for="CpdCabana" class="form-label">Capacidad</label>
+            <input type="number" class="form-control" id="CpdCabana" name="CpdCabana" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="selectZonaCbn" class="form-label">Zona</label>
+            <select class="form-select" id="selectZonaCbn" name="selectZonaCbn">
+              {% for zona in zonas %}
+              <option value="{{ zona.id_zn }}">{{ zona.nombre_zn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregarZona">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Actualizar cabana -->
+<div class="modal fade " id="modalModCabana" tabindex="-1" aria-labelledby="modalModCabanaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalModCabanaLabel">Modificar Cabaña</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar cabana -->
+        <form method="POST" action="{{ url_for('modificar_cabana') }}">
+
+          <input type="hidden" id="id_cbn_act" name="id_cbn_act">
+
+          <div class="mb-3">
+            <label for="ActNoCabana" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="ActNoCabana" name="ActNoCabana" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ActbcnCabana" class="form-label">Ubicación</label>
+            <input type="text" class="form-control" id="ActbcnCabana" name="ActbcnCabana" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ActCpdCabana" class="form-label">Capacidad</label>
+            <input type="number" class="form-control" id="ActCpdCabana" name="ActCpdCabana" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ActselectZonaCbn" class="form-label">Zona</label>
+            <select class="form-select" id="ActselectZonaCbn" name="ActselectZonaCbn">
+              {% for zona in zonas %}
+              <option value="{{ zona.id_zn }}">{{ zona.nombre_zn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregarZona">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar calendario -->
+<div class="modal fade " id="modalAgregarCalendario" tabindex="-1" aria-labelledby="modalAgregarCalendarioLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarCalendarioLabel">Agregar Cabaña</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar fecha -->
+        <form method="POST" action="{{ url_for('agregar_fecha') }}">
+          <div class="mb-3">
+            <label for="lblfecha" class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="lblfecha" name="lblfecha" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="lblHora" class="form-label">Hora</label>
+            <input type="time" class="form-control" id="lblHora" name="lblHora" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="selectfcCbn" class="form-label">Cabaña</label>
+            <select class="form-select" id="selectfcCbn" name="selectfcCbn">
+              {% for cabana in cabanas %}
+              <option value="{{ cabana.id_cbn }}">{{ cabana.no_cbn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="selectEstCbn" class="form-label">Estado</label>
+            <select class="form-select" id="selectEstCbn" name="selectEstCbn">
+              <option value="reservado">Reservado</option>
+              <option value="disponible">Disponible</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregarZona">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Actualizar calendario -->
+<div class="modal fade " id="modalActCalendario" tabindex="-1" aria-labelledby="modalActCalendarioLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalActCalendarioLabel">Modificar Fecha</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar fecha -->
+        <form method="POST" action="{{ url_for('modificar_fecha') }}">
+
+          <input type="hidden" id="id_fc_act" name="id_fc_act">
+
+          <div class="mb-3">
+            <label for="Actlblfecha" class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="Actlblfecha" name="Actlblfecha" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ActlblHora" class="form-label">Hora</label>
+            <input type="time" class="form-control" id="ActlblHora" name="ActlblHora" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ActselectfcCbn" class="form-label">Cabaña</label>
+            <select class="form-select" id="ActselectfcCbn" name="ActselectfcCbn">
+              {% for cabana in cabanas %}
+              <option value="{{ cabana.id_cbn }}">{{ cabana.no_cbn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="selectEstCbn" class="form-label">Estado</label>
+            <select class="form-select" id="selectEstCbn" name="selectEstCbn">
+              <option value="reservado">Reservado</option>
+              <option value="disponible">Disponible</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregarZona">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar reservaciones -->
+<div class="modal fade " id="modalAgregarReservacion" tabindex="-1" aria-labelledby="modalAgregarReservacionLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarReservacionLabel">Agregar Reservacion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para agregar reservaciones -->
+        <form method="POST" action="{{ url_for('agregar_reservacion') }}">
+
+          <div class="mb-3">
+            <label for="selectResCbn" class="form-label">Cabaña</label>
+            <select class="form-select" id="selectResCbn" name="selectResCbn">
+              {% for cabana in cabanas %}
+              <option value="{{ cabana.id_cbn }}">{{ cabana.no_cbn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="fechaFin" class="form-label">Fecha de Fin</label>
+            <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregar">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Actualizar reservaciones -->
+<div class="modal fade " id="modalActReservacion" tabindex="-1" aria-labelledby="modalActReservacionLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalActReservacionLabel">Modificar Reservacion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para actualizar reservaciones -->
+        <form method="POST" action="{{ url_for('modificar_reservacion') }}">
+
+          <input type="hidden" id="id_re_act" name="id_re_act">
+
+          <div class="mb-3">
+            <label for="selectResCbnModal" class="form-label">Cabaña</label>
+            <select class="form-select" id="selectResCbnModal" name="selectResCbnModal">
+              {% for cabana in cabanas %}
+              <option value="{{ cabana.id_cbn }}">{{ cabana.no_cbn }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="fechaInicioModal" class="form-label">Fecha de Inicio</label>
+            <input type="date" class="form-control" id="fechaInicioModal" name="fechaInicioModal" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="fechaFinModal" class="form-label">Fecha de Fin</label>
+            <input type="date" class="form-control" id="fechaFinModal" name="fechaFinModal" required>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="agregar">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- 
+  =================================================================
+  ==================     HDDFIELD       ============================
+  =================================================================
+
+-->
+
+<input type="hidden" id="usuario_id" value="">
+
+
+{% endblock %}
