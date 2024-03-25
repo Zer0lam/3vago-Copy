@@ -35,17 +35,8 @@
     <h5>Menú</h5>
   </div>
   <ul>
-    <li>
-      <a href="#" class="home"><i class="fas fa-home"></i><span class="sidebar-text">Inicio</span></a>
-    </li>
-    <li class="users">
-      <a href="#"><i class="fas fa-user"></i><span class="sidebar-text">Usuarios</span></a>
-    </li>
-    <li class="zone">
-      <a href="#"><i class="fas fa-earth-americas"></i><span class="sidebar-text">Zonas</span></a>
-    </li>
-    <li class="gerente">
-      <a href="#"><i class="fas fa-house"></i><span class="sidebar-text">Cabañas</span></a>
+    <li class="contenido1">
+      <a href="#contenido1"><i class="fas fa-earth-americas"></i><span class="sidebar-text">Contenido</span></a>
     </li>
     <li>
       <a href="{{ url_for('generar_reporte') }}"><i class="fas fa-print"></i><span class="sidebar-text">Imprimir
@@ -113,7 +104,7 @@
 
     <br><br>
 
-    <div class="row">
+    <div id="contenido1" class="row">
       <div class="col">
         <div class="row g-3">
           <div class="col-md-4 col-xxl-12">
