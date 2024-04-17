@@ -40,7 +40,7 @@ def login():
         else:
             session['usuario_logueado'] = email
             session['tipo_usuario'] = tipo_usuario  # Guardar tipo de usuario en la sesión
-            if tipo_usuario == 'Administrador':
+            if tipo_usuario == 'admin':
                 return redirect(url_for('admin'))
             elif tipo_usuario == 'Supervisor':
                 return redirect(url_for('generar_reporte')) #No va
@@ -51,7 +51,7 @@ def login():
 @app.route("/admin")
 def admin():
     # Verifica si el usuario está logueado y si es Administrador
-    if 'usuario_logueado' not in session or session.get('tipo_usuario') != 'Administrador':
+    if 'usuario_logueado' not in session or session.get('tipo_usuario') != 'admin':
         return redirect(url_for('login'))
 
     users_info = GetInfos.llenar_combo_users_zona()

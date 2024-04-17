@@ -10,9 +10,9 @@ class Login:
 
            
             cmd = text("""
-                SELECT u.id_usr, u.email, t.tipo_usr
+                SELECT u.id_user, u.email, t.tipo_user
                 FROM usuarios u
-                JOIN tipo_usuario t ON u.id_tuser = t.id_tpurs
+                JOIN tipo_usuario t ON u.id_tuser = t.id_tuser
                 WHERE u.email = :email AND u.psw = :password
             """)
 
@@ -24,7 +24,7 @@ class Login:
 
             if user:
                 # Devuelve True y el tipo de usuario
-                return True, user.tipo_usr  
+                return True, user.tipo_user  
             else:
                 return False, None
 

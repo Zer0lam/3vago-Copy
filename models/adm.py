@@ -9,13 +9,13 @@ class Admin:
             db = Database()
             conn = db.engine.connect()
             query = text("""
-                SELECT u.id_usr, 
-                    u.nombre || ' ' || u.apellidoP || ' ' || u.apellidoM AS nombre,
+                SELECT u.id_user, 
+                    u.nombre AS nombre,
                     u.alias,
                     u.email,
-                    t.tipo_usr
+                    t.tipo_user
                 FROM usuarios u
-                JOIN tipo_usuario t ON u.id_tuser = t.id_tpurs
+                JOIN tipo_usuario t ON u.id_tuser = t.id_tuser
                 """)
 
             result = conn.execute(query)
@@ -62,7 +62,7 @@ class Admin:
                 conn = db.engine.connect()
 
                 # Eliminar el usuario de la base de datos
-                query = text("DELETE FROM usuarios WHERE id_usr = :id_usuario")
+                query = text("DELETE FROM usuarios WHERE id_user = :id_usuario")
                 conn.execute(query, {'id_usuario': id_usuario})
 
                 conn.commit()
@@ -111,7 +111,7 @@ class Admin:
             query = text("""
                 SELECT z.*, u.nombre
                 FROM zonas z
-                INNER JOIN usuarios u ON z.id_usr = u.id_usr
+                INNER JOIN usuarios u ON z.id_user = u.id_user
                 """)
 
             result = conn.execute(query)
@@ -307,7 +307,7 @@ class Admin:
             db = Database()
             conn = db.engine.connect()
             query = text("""
-                SELECT fechas.id_fh, fechas.dia_disp, cabanas.no_cbn, fechas.disponible
+                SELECT fechas.id_fh, cabanas.no_cbn
                 FROM fechas
                 JOIN cabanas ON fechas.id_cbn = cabanas.id_cbn
                 ORDER BY fechas.id_fh ASC
