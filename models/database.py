@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from decouple import config
-
+#ScrumMaster -> chequeo de la base de datos
 class Database:
     def __init__(self):
         # Cargar las variables de entorno desde el archivo .env
