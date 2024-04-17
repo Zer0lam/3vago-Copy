@@ -4,7 +4,7 @@ from datetime import datetime
 import threading
 
 
-class Admin: //Clase de qdministrador
+class Admin:
     def obtener_usuarios():
             db = Database()
             conn = db.engine.connect()
